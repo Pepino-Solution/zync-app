@@ -3,7 +3,7 @@
 client_id = "50d2bcc1c878d8c6c746005bc927db35"
 name = "zync-app"
 handle = "zync-app"
-application_url = "https://checkout-testament-threats-application.trycloudflare.com"
+application_url = "https://housing-rice-shanghai-pleasure.trycloudflare.com"
 embedded = true
 
 [build]
@@ -19,9 +19,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://checkout-testament-threats-application.trycloudflare.com/auth/callback",
-  "https://checkout-testament-threats-application.trycloudflare.com/auth/shopify/callback",
-  "https://checkout-testament-threats-application.trycloudflare.com/api/auth/callback"
+  "https://housing-rice-shanghai-pleasure.trycloudflare.com/auth/callback",
+  "https://housing-rice-shanghai-pleasure.trycloudflare.com/auth/shopify/callback",
+  "https://housing-rice-shanghai-pleasure.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
