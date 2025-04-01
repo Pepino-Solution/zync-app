@@ -14,13 +14,14 @@ import { Routes as ReactRouterRoutes, Route } from "react-router-dom";
  *
  * @return {Routes} `<Routes/>` from React Router, with a `<Route/>` for each file in `pages`
  */
-export default function Routes({ pages }) {
+export default function Routes({ pages }: { pages: Record<string, { default: React.ComponentType<any> }> }) {
   const routes = useRoutes(pages);
   const routeComponents = routes.map(({ path, component: Component }) => (
     <Route key={path} path={path} element={<Component />} />
   ));
 
-  const NotFound = routes.find(({ path }) => path === "/notFound").component;
+  const notFoundRoute = routes.find(({ path }) => path === "/notFound");
+  const NotFound = notFoundRoute ? notFoundRoute.component : () => <div>Not Found</div>;
 
   return (
     <ReactRouterRoutes>
@@ -30,9 +31,18 @@ export default function Routes({ pages }) {
   );
 }
 
-function useRoutes(pages) {
+interface Page {
+  default: React.ComponentType<any>;
+}
+
+interface RouteType {
+  path: string;
+  component: React.ComponentType<any>;
+}
+
+function useRoutes(pages: Record<string, Page>): RouteType[] {
   const routes = Object.keys(pages)
-    .map((key) => {
+    .map((key): RouteType => {
       let path = key
         .replace("./pages", "")
         .replace(/\.(t|j)sx?$/, "")
@@ -46,7 +56,7 @@ function useRoutes(pages) {
          */
         .replace(/\b[A-Z]/, (firstLetter) => firstLetter.toLowerCase())
         /**
-         * Convert /[handle].jsx and /[...handle].jsx to /:handle.jsx for react-router-dom
+         * Convert /[handle].jsx and /[...handle].jsx to /:handle for react-router-dom
          */
         .replace(/\[(?:[.]{3})?(\w+?)\]/g, (_match, param) => `:${param}`);
 
@@ -63,7 +73,7 @@ function useRoutes(pages) {
         component: pages[key].default,
       };
     })
-    .filter((route) => route.component);
+    .filter((route): route is RouteType => !!route.component);
 
   return routes;
 }

@@ -27,7 +27,7 @@ const DEFAULT_APP_LOCALE = "en";
  * @see Available Shopify Admin languages in the Shopify Help Center:
  * https://help.shopify.com/en/manual/your-account/languages#available-languages
  */
-const SUPPORTED_APP_LOCALES = ["en", "de", "fr"];
+const SUPPORTED_APP_LOCALES = ["en", "pt-BR"];
 
 let _userLocale, _polarisTranslations;
 
