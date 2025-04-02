@@ -13,7 +13,7 @@ import {
 /**
  * The default locale for the app.
  */
-const DEFAULT_APP_LOCALE = "en";
+const DEFAULT_APP_LOCALE = "pt-BR";
 
 /**
  * The supported locales for the app.

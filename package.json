@@ -9,7 +9,10 @@
     "dev": "shopify app dev",
     "info": "shopify app info",
     "generate": "shopify app generate",
-    "deploy": "shopify app deploy"
+    "deploy": "shopify app deploy",
+    "clean:shopify": "rimraf .shopify/bundle",
+    "clean:vite": "rimraf web/frontend/node_modules/.vite",
+    "clean": "npm run clean:shopify && npm run clean:vite"
   },
   "author": "gusta",
   "private": true,
@@ -17,5 +20,8 @@
     "extensions/*",
     "web",
     "web/frontend"
-  ]
+  ],
+  "devDependencies": {
+    "rimraf": "^6.0.1"
+  }
 }

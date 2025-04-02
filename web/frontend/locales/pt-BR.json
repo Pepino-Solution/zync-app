@@ -23,5 +23,24 @@
   },
   "Settings": {
     "title": "Configurações"
+  },
+  "ModalCancel": {
+    "title": "Alterações não salvas",
+    "text": "Tem certeza de que deseja desfazer todas as alterações?",
+    "button_1": "Cancelar",
+    "button_2": "Desfazer alterações"
+  },
+  "ModalEdit": {
+    "title": "Edit o Prompt",
+    "submit": "Enviar edit",
+    "cancel": "Cancelar",
+    "placeholder": "Descreva como você gostaria de editar este prompt...",
+    "info": "Por exemplo: atenda com clareza"
+  },
+  "Buttons": {
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "demo_call": "Chamada de demonstração",
+    "edit_prompt": "Editar Prompt"
   }
 }

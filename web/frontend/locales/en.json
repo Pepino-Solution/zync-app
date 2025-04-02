@@ -23,5 +23,24 @@
   },
   "Settings": {
     "title": "Settings"
+  },
+  "ModalCancel": {
+    "title": "Unsaved changes",
+    "text": "Are you sure you want to undo all changes?",
+    "button_1": "Cancel",
+    "button_2": "Undo changes"
+  },
+  "ModalEdit": {
+    "title": "Edit Prompt",
+    "submit": "Submit edit",
+    "cancel": "Cancel",
+    "placeholder": "Describe how you would like to edit this prompt...",
+    "info": "For example: answer clearly"
+  },
+  "Buttons": {
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "demo_call": "Demo Call",
+    "edit_prompt": "Edit entire prompt"
   }
 }

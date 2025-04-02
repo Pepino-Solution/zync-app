@@ -3,7 +3,7 @@
 client_id = "50d2bcc1c878d8c6c746005bc927db35"
 name = "zync-app"
 handle = "zync-app"
-application_url = "https://contributing-ink-championship-preferences.trycloudflare.com"
+application_url = "https://pipe-emissions-retail-models.trycloudflare.com"
 embedded = true
 
 [build]
@@ -19,9 +19,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://contributing-ink-championship-preferences.trycloudflare.com/auth/callback",
-  "https://contributing-ink-championship-preferences.trycloudflare.com/auth/shopify/callback",
-  "https://contributing-ink-championship-preferences.trycloudflare.com/api/auth/callback"
+  "https://pipe-emissions-retail-models.trycloudflare.com/auth/callback",
+  "https://pipe-emissions-retail-models.trycloudflare.com/auth/shopify/callback",
+  "https://pipe-emissions-retail-models.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
