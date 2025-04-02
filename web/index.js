@@ -5,81 +5,82 @@ import express from "express";
 import serveStatic from "serve-static";
 
 import shopify from "./shopify.js";
-import productCreator from "./product-creator.js";
 import PrivacyWebhookHandlers from "./privacy.js";
+
+import mongoose from "mongoose";
+import promptRoutes from "./prompt.routes.js";
+
+import openaiRoutes from "./openai.routes.js";
+
+import dotenv from "dotenv";
+dotenv.config();
+
+// Conecta ao MongoDB local
+mongoose.connect("mongodb://localhost:27017/zync");
+
+mongoose.connection.on("connected", () => {
+  console.log("[MongoDB] Conectado com sucesso!");
+});
+
+mongoose.connection.on("error", (err) => {
+  console.error("[MongoDB] Erro de conexão:", err);
+});
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
-  10
+  10,
 );
+// end-Conecta ao MongoDB local
 
 const STATIC_PATH =
   process.env.NODE_ENV === "production"
     ? `${process.cwd()}/frontend/dist`
     : `${process.cwd()}/frontend/`;
 
+/** @type {import('express').Application} */
 const app = express();
+app.use(express.json());
 
 // Set up Shopify authentication and webhook handling
 app.get(shopify.config.auth.path, shopify.auth.begin());
 app.get(
   shopify.config.auth.callbackPath,
   shopify.auth.callback(),
-  shopify.redirectToShopifyOrAppRoot()
+  shopify.redirectToShopifyOrAppRoot(),
 );
 app.post(
   shopify.config.webhooks.path,
-  shopify.processWebhooks({ webhookHandlers: PrivacyWebhookHandlers })
+  shopify.processWebhooks({ webhookHandlers: PrivacyWebhookHandlers }),
 );
 
 // If you are adding routes outside of the /api path, remember to
 // also add a proxy rule for them in web/frontend/vite.config.js
 
+app.use("/api/openai", openaiRoutes);
+app.use("/api/prompts", promptRoutes);
+
 app.use("/api/*", shopify.validateAuthenticatedSession());
 
 app.use(express.json());
 
-app.get("/api/products/count", async (_req, res) => {
-  const client = new shopify.api.clients.Graphql({
-    session: res.locals.shopify.session,
-  });
-
-  const countData = await client.request(`
-    query shopifyProductCount {
-      productsCount {
-        count
-      }
-    }
-  `);
-
-  res.status(200).send({ count: countData.data.productsCount.count });
-});
-
-app.post("/api/products", async (_req, res) => {
-  let status = 200;
-  let error = null;
-
-  try {
-    await productCreator(res.locals.shopify.session);
-  } catch (e) {
-    console.log(`Failed to process products/create: ${e.message}`);
-    status = 500;
-    error = e.message;
-  }
-  res.status(status).send({ success: status === 200, error });
-});
-
 app.use(shopify.cspHeaders());
 app.use(serveStatic(STATIC_PATH, { index: false }));
 
+app.use("/*", (req, res, next) => {
+  if (!req.query.shop && process.env.NODE_ENV === "development") {
+    req.query.shop = process.env.SHOP_URL;
+  }
+  next();
+});
+
 app.use("/*", shopify.ensureInstalledOnShop(), async (_req, res, _next) => {
-  return res
+  res
     .status(200)
     .set("Content-Type", "text/html")
     .send(
       readFileSync(join(STATIC_PATH, "index.html"))
         .toString()
-        .replace("%VITE_SHOPIFY_API_KEY%", process.env.SHOPIFY_API_KEY || "")
+        .replace("%VITE_SHOPIFY_API_KEY%", process.env.SHOPIFY_API_KEY || ""),
     );
 });
 

@@ -13,6 +13,7 @@ import {
 import { QuestionCircleIcon, MagicIcon } from "@shopify/polaris-icons";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { generateWithAI } from "../utils/openaiUtils";
 
 interface MagicCardProps {
   title: string;
@@ -41,10 +42,21 @@ const MagicCard: React.FC<MagicCardProps> = ({
     setModalOpen(false);
   };
 
-  const handleConfirm = () => {
-    onTextChange(modalValue);
+  const handleConfirm = async () => {
+    if (!modalValue.trim()) return;
+
+    try {
+      const result = await generateWithAI(modalValue);
+      if (result) {
+        onTextChange(result); // Atualiza o campo do MagicCard com o resultado da IA
+      }
+    } catch (error) {
+      console.error("Erro ao gerar texto com IA:", error);
+    }
+
     setModalOpen(false);
   };
+
 
   return (
     <>

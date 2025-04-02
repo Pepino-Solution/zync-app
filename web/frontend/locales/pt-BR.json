@@ -41,7 +41,8 @@
     "cancel": "Cancelar",
     "save": "Salvar",
     "demo_call": "Chamada de demonstração",
-    "edit_prompt": "Editar Prompt"
+    "edit_prompt": "Editar Prompt",
+    "sound": "Som"
   },
   "MagicCard": {
     "first_mensage": "Primeira mensagem",
@@ -58,5 +59,19 @@
     "info_error": "Uma descrição de como o assistente deve lidar com erros e momentos embaraçosos",
     "closing": "Encerramento de chamada",
     "info_closing": "A última mensagem que o assistente dirá"
+  },
+  "Toast": {
+    "success": "Salvo com sucesso",
+    "error": "Erro",
+    "info": "Informação",
+    "warning": "Aviso"
+  },
+  "VoiceCard": {
+    "label_agent": "Nome do Agente",
+    "label_voice": "Voz do Agente"
+  },
+  "Acessibility": {
+    "cancel_mod": "Cancelar alterações",
+    "edit_prompt": "Editar prompt completo"
   }
 }

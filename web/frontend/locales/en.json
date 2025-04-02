@@ -41,7 +41,8 @@
     "cancel": "Cancelar",
     "save": "Salvar",
     "demo_call": "Demo Call",
-    "edit_prompt": "Edit entire prompt"
+    "edit_prompt": "Edit entire prompt",
+    "sound": "Sound"
   },
   "MagicCard": {
     "first_mensage": "First message",
@@ -58,5 +59,19 @@
     "info_error": "A description of how the assistant should handle errors and awkward moments",
     "closing": "Call closing",
     "info_closing": "The last message that the assistant will say"
+  },
+  "Toast": {
+    "success": "Save to sucess",
+    "error": "Error",
+    "info": "Info",
+    "warning": "Waning"
+  },
+  "VoiceCard": {
+    "label_agent": "Agent name",
+    "label_voice": "Agent voice"
+  },
+  "Acessibility": {
+    "cancel_mod": "Cancel changes",
+    "edit_prompt": "Edit full prompt"
   }
 }
