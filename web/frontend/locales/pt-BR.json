@@ -42,5 +42,21 @@
     "save": "Salvar",
     "demo_call": "Chamada de demonstração",
     "edit_prompt": "Editar Prompt"
+  },
+  "MagicCard": {
+    "first_mensage": "Primeira mensagem",
+    "info_first_mensage": "A primeira mensagem que o assistente dirá",
+    "identity": "Identidade",
+    "info_identity": "Uma descrição da identidade e propósito do assistente",
+    "style": "Estilo",
+    "info_style": "Uma descrição do estilo de comunicação do assistente em marcadores",
+    "guidelines": "Diretrizes de resposta",
+    "info_guidelines": "Uma descrição das respostas do assistente às respostas dos clientes em marcadores",
+    "conversation": "Fluxo de conversação e perguntas da pesquisa",
+    "info_conversation": "Uma descrição das respostas do assistente às respostas dos clientes em marcadores",
+    "error": "Tratamento de erros",
+    "info_error": "Uma descrição de como o assistente deve lidar com erros e momentos embaraçosos",
+    "closing": "Encerramento de chamada",
+    "info_closing": "A última mensagem que o assistente dirá"
   }
 }

@@ -3,11 +3,13 @@ import {
   Page,
   Modal,
   TextField,
-  Form
+  Form,
+  BlockStack
 } from "@shopify/polaris";
 import { useTranslation } from "react-i18next";
 import type { PageProps } from "@shopify/polaris";
 import { SoundIcon, MagicIcon } from "@shopify/polaris-icons";
+import MagicCard from "../components/MagicCard";
 
 const HomePage: React.FC = () => {
   const { t } = useTranslation();
@@ -15,6 +17,13 @@ const HomePage: React.FC = () => {
   const [activeCancelModal, setActiveCancelModal] = useState<boolean>(false);
   const [activeEditModal, setActiveEditModal] = useState<boolean>(false);
   const [promptText, setPromptText] = useState<string>("");
+  const [firstMessagePrompt, setFirstMessagePrompt] = useState<string>("");
+  const [identityPrompt, setIdentityPrompt] = useState<string>("");
+  const [stylePrompt, setStylePrompt] = useState<string>("");
+  const [guidelinesPrompt, setGuideLinesPrompt] = useState<string>("");
+  const [conversationPrompt, setConversationPrompt] = useState<string>("");
+  const [errorPrompt, setErrorPrompt] = useState<string>("");
+  const [closingPrompt, setClosingPrompt] = useState<string>("");
 
   // Handlers do modal de cancelamento
   const handleCancelClick = useCallback((): void => {
@@ -49,11 +58,13 @@ const HomePage: React.FC = () => {
     []
   );
 
+  // primaryAction of Page
   const primaryAction: PageProps["primaryAction"] = {
     content: "Save",
     onAction: () => alert("Salvar alterações"),
   };
 
+  // secondaryActions of Page
   const secondaryActions: PageProps["secondaryActions"] = [
     {
       content: t("Buttons.cancel"),
@@ -82,6 +93,50 @@ const HomePage: React.FC = () => {
         secondaryActions={secondaryActions}
       >
         {/* Conteúdo da página */}
+        <BlockStack gap="400">
+          <MagicCard
+            title={t("MagicCard.first_mensage")}
+            tooltipText={t("MagicCard.info_first_mensage")}
+            textValue={firstMessagePrompt}
+            onTextChange={setFirstMessagePrompt}
+          />
+          <MagicCard
+            title={t("MagicCard.identity")}
+            tooltipText={t("MagicCard.info_identity")}
+            textValue={identityPrompt}
+            onTextChange={setIdentityPrompt}
+          />
+          <MagicCard
+            title={t("MagicCard.style")}
+            tooltipText={t("MagicCard.info_style")}
+            textValue={stylePrompt}
+            onTextChange={setStylePrompt}
+          />
+          <MagicCard
+            title={t("MagicCard.guidelines")}
+            tooltipText={t("MagicCard.info_guidelines")}
+            textValue={guidelinesPrompt}
+            onTextChange={setGuideLinesPrompt}
+          />
+          <MagicCard
+            title={t("MagicCard.conversation")}
+            tooltipText={t("MagicCard.info_conversation")}
+            textValue={conversationPrompt}
+            onTextChange={setConversationPrompt}
+          />
+          <MagicCard
+            title={t("MagicCard.error")}
+            tooltipText={t("MagicCard.info_error")}
+            textValue={errorPrompt}
+            onTextChange={setErrorPrompt}
+          />
+          <MagicCard
+            title={t("MagicCard.closing")}
+            tooltipText={t("MagicCard.info_closing")}
+            textValue={closingPrompt}
+            onTextChange={setClosingPrompt}
+          />
+        </BlockStack>
       </Page>
 
       {/* Modal de cancelamento */}

@@ -42,5 +42,21 @@
     "save": "Salvar",
     "demo_call": "Demo Call",
     "edit_prompt": "Edit entire prompt"
+  },
+  "MagicCard": {
+    "first_mensage": "First message",
+    "info_first_mensage": "The first message that the assistant will say",
+    "identity": "Identity",
+    "info_identity": "A description of the assistant identity and purpose",
+    "style": "Style",
+    "info_style": "A description of the assistant style of communication in bullets",
+    "guidelines": "Response guidelines",
+    "info_guidelines": "A description of the assistant responses to customers answers in bullets",
+    "conversation": "Conversation flow and survey questions",
+    "info_conversation": "A description of the assistant conversation tasks and goals. Include your list of questions here in bullets.",
+    "error": "Error handling",
+    "info_error": "A description of how the assistant should handle errors and awkward moments",
+    "closing": "Call closing",
+    "info_closing": "The last message that the assistant will say"
   }
 }
