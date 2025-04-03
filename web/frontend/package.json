@@ -26,6 +26,7 @@
     "@shopify/i18next-shopify": "^0.2.9",
     "@shopify/polaris": "^13.9.5",
     "@shopify/polaris-icons": "^9.3.1",
+    "@vapi-ai/web": "^2.2.5",
     "@vitejs/plugin-react": "4.2.1",
     "dotenv": "^16.4.7",
     "i18next": "^23.1.0",

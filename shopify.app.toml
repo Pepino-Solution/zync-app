@@ -3,7 +3,7 @@
 client_id = "50d2bcc1c878d8c6c746005bc927db35"
 name = "zync-app"
 handle = "zync-app"
-application_url = "https://packed-zimbabwe-advantage-saves.trycloudflare.com"
+application_url = "https://fr-encourages-oe-recovered.trycloudflare.com"
 embedded = true
 
 [build]
@@ -19,9 +19,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://packed-zimbabwe-advantage-saves.trycloudflare.com/auth/callback",
-  "https://packed-zimbabwe-advantage-saves.trycloudflare.com/auth/shopify/callback",
-  "https://packed-zimbabwe-advantage-saves.trycloudflare.com/api/auth/callback"
+  "https://fr-encourages-oe-recovered.trycloudflare.com/auth/callback",
+  "https://fr-encourages-oe-recovered.trycloudflare.com/auth/shopify/callback",
+  "https://fr-encourages-oe-recovered.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]

@@ -12,6 +12,8 @@ import promptRoutes from "./prompt.routes.js";
 
 import openaiRoutes from "./openai.routes.js";
 
+import vapiRoutes from "./vapi.routes.js";
+
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -58,6 +60,8 @@ app.post(
 
 app.use("/api/openai", openaiRoutes);
 app.use("/api/prompts", promptRoutes);
+
+app.use("/api/vapi", vapiRoutes);
 
 app.use("/api/*", shopify.validateAuthenticatedSession());
 

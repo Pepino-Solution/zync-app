@@ -5,15 +5,17 @@ import {
   TextField,
   Form,
   BlockStack,
-  Banner
+  Banner,
 } from "@shopify/polaris";
 import { useTranslation } from "react-i18next";
 import type { PageProps } from "@shopify/polaris";
 import { SoundIcon, MagicIcon } from "@shopify/polaris-icons";
+import { updateVoiceOnVapi } from "../utils/voiceApi";
 import MagicCard from "../components/MagicCard";
 import VoiceCallCard from "../components/VoiceCallCard";
 
-const SHOP_DOMAIN = "pepino-developer.myshopify.com";
+const SHOP_DOMAIN = import.meta.env.VITE_SHOP_DOMAIN;
+const ASSISTANT_ID = import.meta.env.VITE_ASSISTENT_ID;
 
 const loadPrompts = async () => {
   try {
@@ -60,10 +62,11 @@ const HomePage: React.FC = () => {
   const [errorPrompt, setErrorPrompt] = useState<string>("");
   const [closingPrompt, setClosingPrompt] = useState<string>("");
   const [showSuccess, setShowSuccess] = useState(false);
-  const [initialPrompts, setInitialPrompts] = useState<Record<string, string>>({});
+  const [initialPrompts, setInitialPrompts] = useState<Record<string, string>>(
+    {},
+  );
   const [voiceInput, setVoiceInput] = useState<string>("");
-  const [selectedVoice, setSelectedVoice] = useState<string>("Josh");
-
+  const [selectedVoice, setSelectedVoice] = useState<string>("Elliot");
 
   useEffect(() => {
     (async () => {
@@ -79,7 +82,7 @@ const HomePage: React.FC = () => {
         setClosingPrompt(data.closingPrompt || "");
         setPromptText(data.promptEdit || "");
         setVoiceInput(data.voiceInput || "");
-        setSelectedVoice(data.selectedVoice || "Josh");
+        setSelectedVoice(data.selectedVoice || "Elliot");
 
         // Salva os dados "originais" para rollback
         setInitialPrompts({
@@ -91,8 +94,20 @@ const HomePage: React.FC = () => {
           errorPrompt: data.errorPrompt || "",
           closingPrompt: data.closingPrompt || "",
           voiceInput: data.voiceInput || "",
-          selectedVoice: data.selectedVoice || "Josh",
+          selectedVoice: data.selectedVoice || "Elliot",
         });
+
+        await updateVoiceOnVapi(
+          ASSISTANT_ID,
+          selectedVoice,
+          firstMessagePrompt,
+          closingPrompt,
+          identityPrompt,
+          stylePrompt,
+          guidelinesPrompt,
+          conversationPrompt,
+          errorPrompt,
+        );
       }
     })();
   }, []);
@@ -106,7 +121,7 @@ const HomePage: React.FC = () => {
     setErrorPrompt(initialPrompts.errorPrompt || "");
     setClosingPrompt(initialPrompts.closingPrompt || "");
     setVoiceInput(initialPrompts.voiceInput || "");
-    setSelectedVoice(initialPrompts.selectedVoice || "Josh");
+    setSelectedVoice(initialPrompts.selectedVoice || "Elliot");
   }, [initialPrompts]);
 
   // Handlers do modal de cancelamento
@@ -143,7 +158,7 @@ const HomePage: React.FC = () => {
 
   const handlePromptChange = useCallback(
     (value: string) => setPromptText(value),
-    []
+    [],
   );
 
   // primaryAction of Page
@@ -162,11 +177,22 @@ const HomePage: React.FC = () => {
         selectedVoice,
       };
       const result = await savePrompts(dataToSave);
-      if (result) {
+      const vapiResult = await updateVoiceOnVapi(
+        ASSISTANT_ID,
+        selectedVoice,
+        firstMessagePrompt,
+        closingPrompt,
+        identityPrompt,
+        stylePrompt,
+        guidelinesPrompt,
+        conversationPrompt,
+        errorPrompt,
+      );
+      if (result && vapiResult) {
         setShowSuccess(true);
         setTimeout(() => setShowSuccess(false), 3000);
       }
-    }
+    },
   };
 
   // secondaryActions of Page
@@ -204,7 +230,6 @@ const HomePage: React.FC = () => {
         primaryAction={primaryAction}
         secondaryActions={secondaryActions}
       >
-
         {/* Conteúdo da página */}
         <BlockStack gap="400">
           <VoiceCallCard
@@ -214,13 +239,6 @@ const HomePage: React.FC = () => {
             onInputChange={setVoiceInput}
             selectedVoice={selectedVoice}
             onVoiceChange={setSelectedVoice}
-            onCall={() => {
-              console.log("Chamando Vapi com:", {
-                text: voiceInput,
-                voice: selectedVoice,
-              });
-              // Aqui futuramente você chama sua integração com o vapi.ai
-            }}
           />
           <MagicCard
             title={t("MagicCard.first_mensage")}
@@ -315,7 +333,13 @@ const HomePage: React.FC = () => {
               autoComplete="off"
               placeholder={t("ModalEdit.placeholder")}
             />
-            <p style={{ marginTop: "0.5rem", color: "#6d7175", fontSize: "0.85rem" }}>
+            <p
+              style={{
+                marginTop: "0.5rem",
+                color: "#6d7175",
+                fontSize: "0.85rem",
+              }}
+            >
               {t("ModalEdit.info")}
             </p>
           </Form>

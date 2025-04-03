@@ -13,8 +13,7 @@ router.post("/", async (req, res) => {
   }
 
   const openai = new OpenAI({
-    apiKey:
-      "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",
+    apiKey: process.env.OPENAI_API_KEY,
   });
 
   try {

@@ -12,7 +12,7 @@ const PromptSchema = new mongoose.Schema({
   closingPrompt: { type: String, default: "" },
   promptEdit: { type: String, default: "" },
   voiceInput: { type: String, default: "" },
-  selectedVoice: { type: String, default: "Josh" },
+  selectedVoice: { type: String, default: "Elliot" },
 });
 
 export const PromptModel =

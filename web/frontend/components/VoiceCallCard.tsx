@@ -7,10 +7,26 @@ import {
   InlineStack,
   BlockStack,
   InlineGrid,
+  Spinner
 } from "@shopify/polaris";
 import { SoundIcon } from "@shopify/polaris-icons";
 import { useTranslation } from "react-i18next";
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
+import Vapi from "@vapi-ai/web";
+
+const originalConsoleWarn = console.warn;
+console.warn = (...args) => {
+  if (
+    args[0] &&
+    typeof args[0] === "string" &&
+    args[0].includes("Permissions policy violation")
+  ) {
+    return;
+  }
+  originalConsoleWarn(...args);
+};
+
+const VAPI_PUBLIC_KEY = import.meta.env.VITE_VAPI_PUBLIC_KEY;
 
 interface VoiceCallCardProps {
   label: string;
@@ -19,7 +35,6 @@ interface VoiceCallCardProps {
   onInputChange: (value: string) => void;
   selectedVoice: string;
   onVoiceChange: (value: string) => void;
-  onCall: () => void;
 }
 
 const VoiceCallCard: React.FC<VoiceCallCardProps> = ({
@@ -28,18 +43,70 @@ const VoiceCallCard: React.FC<VoiceCallCardProps> = ({
   onInputChange,
   selectedVoice,
   onVoiceChange,
-  onCall,
   labelVoice
 }) => {
   const { t } = useTranslation();
+  const vapiRef = useRef<Vapi | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const voiceOptions = [
-    { label: "Josh", value: "Josh" },
-    { label: "Ana", value: "Ana" },
-    { label: "Jhon", value: "Jhon" },
-    { label: "Liz", value: "Liz" },
-    { label: "Spike", value: "Spike" }
+    { label: "Elliot", value: "Elliot" },
+    { label: "Hana", value: "Hana" }
   ];
+
+  useEffect(() => {
+    if (!VAPI_PUBLIC_KEY) {
+      console.error("VAPI_PUBLIC_KEY não está definido.");
+      return;
+    }
+
+    // Cria a instância apenas uma vez
+    const client = new Vapi(VAPI_PUBLIC_KEY);
+    vapiRef.current = client;
+
+    client.on("speech-end", () => {
+      client.stop();
+      setIsLoading(false);
+    });
+
+    return () => {
+      client.stop();
+    };
+  }, []);
+
+  const handlePlaySample = async () => {
+    if (!vapiRef.current) return;
+
+    setIsLoading(true);
+    const vapi = vapiRef.current;
+
+    // Garante que não há chamadas ativas
+    await vapi.stop();
+
+    const assistantConfig: {} = {
+      name: "Preview Voice",
+      firstMessage: "Olá, tudo bem? Em que posso ajudar?",
+      voice: {
+        provider: "vapi",
+        voiceId: selectedVoice as
+          | "Elliot"
+          | "Hana",
+        language: "pt-BR",
+      },
+      model: {
+        provider: "openai",
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: "Você é um assistente de voz amigável para demonstração.",
+          },
+        ],
+      },
+    };
+
+    vapiRef.current.start(assistantConfig);
+  };
 
   return (
     <Card padding="400">
@@ -58,12 +125,20 @@ const VoiceCallCard: React.FC<VoiceCallCardProps> = ({
             onChange={onVoiceChange}
           />
           <InlineStack blockAlign="end">
-            <Button
-              icon={SoundIcon}
-              onClick={onCall}
-              accessibilityLabel={t("Buttons.sound")}
-              size="large"
-            />
+            {isLoading ? (
+              <Button
+                icon={<Spinner accessibilityLabel="Carregando..." size="small" />}
+                disabled
+                size="large"
+              />
+            ) : (
+              <Button
+                icon={SoundIcon}
+                onClick={handlePlaySample}
+                accessibilityLabel={t("Buttons.sound")}
+                size="large"
+              />
+            )}
           </InlineStack>
         </InlineGrid>
       </BlockStack>
