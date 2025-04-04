@@ -1,3 +1,4 @@
+// This file contains functions to interact with the VAPI API for voice-related operations.
 export async function updateVoiceOnVapi(
   assistantId: string,
   voiceId: string,
@@ -8,6 +9,7 @@ export async function updateVoiceOnVapi(
   guidelinesPrompt: string,
   conversationPrompt: string,
   errorPrompt: string,
+  agentName: string
 ): Promise<boolean> {
   try {
     const res = await fetch("/api/vapi/update-voice", {
@@ -23,6 +25,7 @@ export async function updateVoiceOnVapi(
         guidelinesPrompt,
         conversationPrompt,
         errorPrompt,
+        agentName,
       }),
     });
 

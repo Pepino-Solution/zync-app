@@ -1,6 +1,5 @@
 # Environment Configuration
 .env
-.env.*
 
 # Dependency directory
 node_modules
@@ -30,3 +29,6 @@ web/database.sqlite
 # Ignore shopify files created during app dev
 .shopify/*
 .shopify.lock
+
+# Toml
+shopifyCopy.app.toml

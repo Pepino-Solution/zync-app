@@ -1,9 +1,9 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "50d2bcc1c878d8c6c746005bc927db35"
+client_id = "<YOUR CLIENT ID APP>"
 name = "zync-app"
 handle = "zync-app"
-application_url = "https://fr-encourages-oe-recovered.trycloudflare.com"
+application_url = "https://oxford-appreciate-boss-therapeutic.trycloudflare.com"
 embedded = true
 
 [build]
@@ -19,9 +19,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://fr-encourages-oe-recovered.trycloudflare.com/auth/callback",
-  "https://fr-encourages-oe-recovered.trycloudflare.com/auth/shopify/callback",
-  "https://fr-encourages-oe-recovered.trycloudflare.com/api/auth/callback"
+  "https://oxford-appreciate-boss-therapeutic.trycloudflare.com/auth/callback",
+  "https://oxford-appreciate-boss-therapeutic.trycloudflare.com/auth/shopify/callback",
+  "https://oxford-appreciate-boss-therapeutic.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]

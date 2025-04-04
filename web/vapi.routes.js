@@ -1,15 +1,8 @@
-// routes/vapi.routes.js
 import express from "express";
 import { updateAssistantVoice } from "./controllers/vapi.controller.js";
-import dotenv from "dotenv";
-dotenv.config();
 
 const router = express.Router();
 
-/**
- * POST /api/vapi/update-voice
- * Atualiza a voz do assistente com o voiceId fornecido.
- */
 router.post("/update-voice", async (req, res) => {
   const {
     assistantId,
@@ -21,6 +14,7 @@ router.post("/update-voice", async (req, res) => {
     guidelinesPrompt,
     conversationPrompt,
     errorPrompt,
+    voiceInput,
   } = req.body;
 
   if (!assistantId || !voiceId) {
@@ -41,6 +35,7 @@ router.post("/update-voice", async (req, res) => {
       guidelinesPrompt,
       conversationPrompt,
       errorPrompt,
+      voiceInput,
     );
     res.status(200).json({ success: true });
   } catch (error) {

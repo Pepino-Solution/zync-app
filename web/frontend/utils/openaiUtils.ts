@@ -1,3 +1,4 @@
+// This file contains utility functions for interacting with the OpenAI API.
 export const generateWithAI = async (prompt: string): Promise<string | null> => {
   try {
     const res = await fetch("/api/openai", {

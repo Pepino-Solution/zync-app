@@ -17,6 +17,7 @@ export async function updateAssistantVoice(
   guidelinesPrompt,
   conversationPrompt,
   errorPrompt,
+  agentName,
 ) {
   const structuredPrompt = `
     ## Identidade
@@ -36,6 +37,7 @@ export async function updateAssistantVoice(
   `.trim();
   try {
     const response = await client.assistants.update(assistantId, {
+      name: agentName,
       voice: {
         provider: "vapi",
         voiceId: voiceId,

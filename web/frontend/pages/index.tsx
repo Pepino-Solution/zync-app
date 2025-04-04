@@ -1,4 +1,6 @@
-import { useState, useCallback, useEffect } from "react";
+//React
+import { useState, useCallback, useEffect, useRef } from "react";
+//Polaris
 import {
   Page,
   Modal,
@@ -7,50 +9,31 @@ import {
   BlockStack,
   Banner,
 } from "@shopify/polaris";
-import { useTranslation } from "react-i18next";
 import type { PageProps } from "@shopify/polaris";
 import { SoundIcon, MagicIcon } from "@shopify/polaris-icons";
+//o18n
+import { useTranslation } from "react-i18next";
+//Utils
 import { updateVoiceOnVapi } from "../utils/voiceApi";
+import { loadPrompts, savePrompts } from "../utils/promptsMongo";
+//Components
 import MagicCard from "../components/MagicCard";
 import VoiceCallCard from "../components/VoiceCallCard";
+//Vapi
+import Vapi from "@vapi-ai/web";
 
+
+// Vars .env - frontend
 const SHOP_DOMAIN = import.meta.env.VITE_SHOP_DOMAIN;
 const ASSISTANT_ID = import.meta.env.VITE_ASSISTENT_ID;
+const VITE_VAPI_PUBLIC_KEY = import.meta.env.VITE_VAPI_PUBLIC_KEY
 
-const loadPrompts = async () => {
-  try {
-    const res = await fetch(`/api/prompts?shop=${SHOP_DOMAIN}`);
-    const data = await res.json();
-
-    return data;
-  } catch (error) {
-    console.error("Erro ao carregar prompts:", error);
-    return null;
-  }
-};
-
-const savePrompts = async (prompts: Record<string, string>) => {
-  try {
-    const res = await fetch("/api/prompts", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        shop: SHOP_DOMAIN,
-        ...prompts,
-      }),
-    });
-
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    console.error("Erro ao salvar prompts:", error);
-    return null;
-  }
-};
 
 const HomePage: React.FC = () => {
+  //i18n
   const { t } = useTranslation();
 
+  // State management
   const [activeCancelModal, setActiveCancelModal] = useState<boolean>(false);
   const [activeEditModal, setActiveEditModal] = useState<boolean>(false);
   const [promptText, setPromptText] = useState<string>("");
@@ -67,12 +50,16 @@ const HomePage: React.FC = () => {
   );
   const [voiceInput, setVoiceInput] = useState<string>("");
   const [selectedVoice, setSelectedVoice] = useState<string>("Elliot");
+  const [isCalling, setIsCalling] = useState<boolean>(false);
+  // References management
+  const vapiRef = useRef<Vapi | null>(null);
 
   useEffect(() => {
     (async () => {
-      const data = await loadPrompts();
+      const data = await loadPrompts(SHOP_DOMAIN);
 
       if (data) {
+        // Sets the state with the loaded data
         setFirstMessagePrompt(data.firstMessagePrompt || "");
         setIdentityPrompt(data.identityPrompt || "");
         setStylePrompt(data.stylePrompt || "");
@@ -84,7 +71,7 @@ const HomePage: React.FC = () => {
         setVoiceInput(data.voiceInput || "");
         setSelectedVoice(data.selectedVoice || "Elliot");
 
-        // Salva os dados "originais" para rollback
+        // Saves the "original" data for rollback
         setInitialPrompts({
           firstMessagePrompt: data.firstMessagePrompt || "",
           identityPrompt: data.identityPrompt || "",
@@ -97,6 +84,7 @@ const HomePage: React.FC = () => {
           selectedVoice: data.selectedVoice || "Elliot",
         });
 
+        // Updates the voice in Vapi with the loaded data
         await updateVoiceOnVapi(
           ASSISTANT_ID,
           selectedVoice,
@@ -107,11 +95,27 @@ const HomePage: React.FC = () => {
           guidelinesPrompt,
           conversationPrompt,
           errorPrompt,
+          voiceInput
         );
       }
     })();
+    // Demo call
+    if (!vapiRef.current && VITE_VAPI_PUBLIC_KEY) {
+      const client = new Vapi(VITE_VAPI_PUBLIC_KEY);
+      vapiRef.current = client;
+
+      client.on("call-start", () => {
+        setIsCalling(true);
+      });
+
+      client.on("call-end", () => {
+        console.log("✅ Chamada encerrada.");
+        setIsCalling(false);
+      });
+    }
   }, []);
 
+  // Function to revert changes
   const rollbackChanges = useCallback(() => {
     setFirstMessagePrompt(initialPrompts.firstMessagePrompt || "");
     setIdentityPrompt(initialPrompts.identityPrompt || "");
@@ -124,7 +128,7 @@ const HomePage: React.FC = () => {
     setSelectedVoice(initialPrompts.selectedVoice || "Elliot");
   }, [initialPrompts]);
 
-  // Handlers do modal de cancelamento
+  // Cancellation modal handlers
   const handleCancelClick = useCallback((): void => {
     setActiveCancelModal(true);
   }, []);
@@ -138,7 +142,7 @@ const HomePage: React.FC = () => {
     rollbackChanges();
   }, [rollbackChanges]);
 
-  // Handlers do modal de edição
+  // Edit modal handlers
   const handleEditClick = useCallback((): void => {
     setActiveEditModal(true);
   }, []);
@@ -148,7 +152,7 @@ const HomePage: React.FC = () => {
   }, []);
 
   const handleEditSubmit = useCallback(async (): Promise<void> => {
-    const result = await savePrompts({ promptEdit: promptText });
+    const result = await savePrompts({ promptEdit: promptText }, SHOP_DOMAIN);
     if (result) {
       setActiveEditModal(false);
       setShowSuccess(true); // ou outro feedback
@@ -160,6 +164,22 @@ const HomePage: React.FC = () => {
     (value: string) => setPromptText(value),
     [],
   );
+
+  // Call handlers
+  const handleCallToggle = async () => {
+    if (!vapiRef.current) return;
+
+    const vapi = vapiRef.current;
+
+    // Garante que não há chamadas ativas
+    await vapi.stop();
+
+    setIsCalling(true);
+
+    await vapiRef.current.start(ASSISTANT_ID);
+
+    setIsCalling(false);
+  };
 
   // primaryAction of Page
   const primaryAction: PageProps["primaryAction"] = {
@@ -176,7 +196,7 @@ const HomePage: React.FC = () => {
         voiceInput,
         selectedVoice,
       };
-      const result = await savePrompts(dataToSave);
+      const result = await savePrompts(dataToSave, SHOP_DOMAIN);
       const vapiResult = await updateVoiceOnVapi(
         ASSISTANT_ID,
         selectedVoice,
@@ -187,6 +207,7 @@ const HomePage: React.FC = () => {
         guidelinesPrompt,
         conversationPrompt,
         errorPrompt,
+        voiceInput
       );
       if (result && vapiResult) {
         setShowSuccess(true);
@@ -209,9 +230,9 @@ const HomePage: React.FC = () => {
       onAction: handleEditClick,
     },
     {
-      content: t("Buttons.demo_call"),
+      content: isCalling ? t("Buttons.end_call") : t("Buttons.demo_call"),
       icon: SoundIcon,
-      onAction: () => alert("Abrir demo call"),
+      onAction: handleCallToggle,
     },
   ];
 
@@ -230,7 +251,7 @@ const HomePage: React.FC = () => {
         primaryAction={primaryAction}
         secondaryActions={secondaryActions}
       >
-        {/* Conteúdo da página */}
+        {/* Page content */}
         <BlockStack gap="400">
           <VoiceCallCard
             label={t("VoiceCard.label_agent")}
@@ -285,7 +306,7 @@ const HomePage: React.FC = () => {
         </BlockStack>
       </Page>
 
-      {/* Modal de cancelamento */}
+      {/* Cancellation modal */}
       <Modal
         open={activeCancelModal}
         onClose={handleModalCancelClose}
@@ -307,7 +328,7 @@ const HomePage: React.FC = () => {
         </Modal.Section>
       </Modal>
 
-      {/* Modal de edição de prompt */}
+      {/* Prompt Edit Modal */}
       <Modal
         open={activeEditModal}
         onClose={handleEditClose}

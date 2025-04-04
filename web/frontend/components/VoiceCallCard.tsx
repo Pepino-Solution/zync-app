@@ -1,4 +1,6 @@
-// Componente VoiceCallCard.tsx
+//React
+import React, { useRef, useEffect, useState } from "react";
+//Polaris
 import {
   Card,
   TextField,
@@ -10,21 +12,10 @@ import {
   Spinner
 } from "@shopify/polaris";
 import { SoundIcon } from "@shopify/polaris-icons";
+//i18n
 import { useTranslation } from "react-i18next";
-import React, { useRef, useEffect, useState } from "react";
+//Vapi
 import Vapi from "@vapi-ai/web";
-
-const originalConsoleWarn = console.warn;
-console.warn = (...args) => {
-  if (
-    args[0] &&
-    typeof args[0] === "string" &&
-    args[0].includes("Permissions policy violation")
-  ) {
-    return;
-  }
-  originalConsoleWarn(...args);
-};
 
 const VAPI_PUBLIC_KEY = import.meta.env.VITE_VAPI_PUBLIC_KEY;
 
@@ -60,7 +51,6 @@ const VoiceCallCard: React.FC<VoiceCallCardProps> = ({
       return;
     }
 
-    // Cria a instância apenas uma vez
     const client = new Vapi(VAPI_PUBLIC_KEY);
     vapiRef.current = client;
 
@@ -80,9 +70,10 @@ const VoiceCallCard: React.FC<VoiceCallCardProps> = ({
     setIsLoading(true);
     const vapi = vapiRef.current;
 
-    // Garante que não há chamadas ativas
+    // Ensures there are no active calls
     await vapi.stop();
 
+    // Creat Assistant
     const assistantConfig: {} = {
       name: "Preview Voice",
       firstMessage: "Olá, tudo bem? Em que posso ajudar?",
@@ -105,6 +96,7 @@ const VoiceCallCard: React.FC<VoiceCallCardProps> = ({
       },
     };
 
+    // Call Assistant
     vapiRef.current.start(assistantConfig);
   };
 

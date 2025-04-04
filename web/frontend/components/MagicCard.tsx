@@ -1,3 +1,6 @@
+//React
+import React, { useState } from "react";
+//Polaris
 import {
   Card,
   Text,
@@ -11,8 +14,9 @@ import {
   Form,
 } from "@shopify/polaris";
 import { QuestionCircleIcon, MagicIcon } from "@shopify/polaris-icons";
-import React, { useState } from "react";
+//i18n
 import { useTranslation } from "react-i18next";
+//Utils
 import { generateWithAI } from "../utils/openaiUtils";
 
 interface MagicCardProps {
@@ -48,7 +52,7 @@ const MagicCard: React.FC<MagicCardProps> = ({
     try {
       const result = await generateWithAI(modalValue);
       if (result) {
-        onTextChange(result); // Atualiza o campo do MagicCard com o resultado da IA
+        onTextChange(result);
       }
     } catch (error) {
       console.error("Erro ao gerar texto com IA:", error);
